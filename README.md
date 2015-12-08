@@ -1,2 +1,2 @@
-# SockeListener
-c# demo project
+# SocketListener
+c# demo project for sockets
