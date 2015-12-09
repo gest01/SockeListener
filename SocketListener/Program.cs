@@ -11,7 +11,7 @@ namespace SocketListener
 
         static void Main(string[] args)
         {
-            String endpointIp = "192.168.1.2";
+            String endpointIp = "192.168.1.58";
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
 
@@ -38,7 +38,7 @@ namespace SocketListener
         {
             int received = _socket.EndReceive(ar);
 
-            ParseData(_buffer, received);
+            ParseIpHeader(_buffer, received);
 
             _buffer = new byte[4096];
 
@@ -46,15 +46,11 @@ namespace SocketListener
             _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(OnReceiveData), null);
         }
 
-        private static void ParseData(byte[] byteData, int nReceived)
+        private static void ParseIpHeader(byte[] byteData, int nReceived)
         {
-            //Since all protocol packets are encapsulated in the IP datagram
-            //so we start by parsing the IP header and see what protocol data
-            //is being carried by it
+            // All protocol packets are encapsulated in the IP datagram
             IPHeader ipHeader = new IPHeader(byteData, nReceived);
 
-            //Now according to the protocol being carried by the IP datagram we parse 
-            //the data field of the datagram
             switch (ipHeader.ProtocolType)
             {
                 case Protocol.ICMP:
